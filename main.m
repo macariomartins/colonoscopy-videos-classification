@@ -17,19 +17,17 @@ clc;
 %
 load('Dataset\gastrointestinal_colonoscopy_lesions_dataset.mat');
 
-% GLOBAL SETTGINGS
-X   = features;     % P-by-N matrix of P features and N input vectors
-D   = class_label;  % R-by-N matrix of R labels and N target class vectors
-err = 1e-7;         % Mean squared error goal for both neural networks
-
-% MLP SETTINGS
-Q = [7, 5]; % Row vector of one or more hidden layer sizes.
-
-% RBF SETTINGS
-spread = 1;           % Spread of radial basis functions (default = 1.0)
-max_q  = size(X, 2);  % Maximum number of neurons (default is N)
-increment_q = 1;      % Number of neurons to add between displays (default = 1)
+X             = features;    % P-by-N matrix of P features and N input vectors
+D             = class_label; % R-by-N matrix of R labels and N target class vectors
+err           = 1e-7;        % Mean squared error goal for both neural networks
+epochs        = 500;         % Max number of epochs
+learning_rate = 0.01;        % Learning rate to be used in weights adjusts
 
 %% Build Neural Networks
-% mlp = NeuralNetworks.MLP(X, D, Q, err);
-% rbf = NeuralNetworks.RBF(X, D, err, spread, max_q, increment_q);
+%
+%  The functions bellow build the neural networks with global parameters,
+%  i.e, parameters that could be used in both neural networks. The
+%  parameters in brackets are the number of neurons in hidden layers.
+%
+mlp = NeuralNetworks.MLP(X, D, [7, 5], learning_rate, epochs, err);
+rbf = NeuralNetworks.RBF(X, D, [5], learning_rate, epochs, err);

@@ -1,4 +1,4 @@
-function network = MLP(X, D, Q, err)
+function network = MLP(X, D, L, learning_rate, epochs, err)
 %MLP Creates a Multi-Layer Perceptron Neural Network
 %parameters:
 %   This function creates and train a MLP Neural Network with the following
@@ -8,16 +8,35 @@ function network = MLP(X, D, Q, err)
 %   D   R-by-N matrix of R labels and N target class vectors
 %   Q   Row vector of one or more hidden layer sizes.
 %
-    classes_num = max(D);
-    samples_num = size(D, 2);
-    E = zeros(classes_num, samples_num);
+
+    network = feedforwardnet(L, 'trainlm');
     
-    for i = 1:samples_num
-        E(D(i), i) = 1;
+    network.layers{1}.transferFcn = 'tansig';
+    network.layers{2}.transferFcn = 'tansig';
+    network.trainParam.lr         = learning_rate;
+    network.trainParam.epochs     = epochs;
+    network.trainParam.goal       = err;
+    network.trainParam.showWindow = false;
+    network.trainParam.max_fail   = 1000;
+    network.divideFcn             = '';
+    
+    fprintf("BUILDING MULTI LAYER PERCEPTRON WITH PARAMETERS:");
+    fprintf("\n> X(%dx%d)", size(D, 1), size(D, 2));
+    fprintf("\n> D(%dx%d)", size(D, 1), size(D, 2));
+    fprintf("\n> Neurons layers: ");
+    
+    for i = 1:size(L, 2)
+        fprintf("\n\tLayer %d: %d neurons", i, L(i));
     end
     
-    network = feedforwardnet(Q, 'trainlm');
-    network.trainParam.goal = err;
-    network = train(network, X, E);
+    fprintf("\n> Learning rate: %f", learning_rate);
+    fprintf("\n> Max. Epochs: %d", epochs);
+    fprintf("\n> Error: %f\n\n", err);
+    
+    tic;
+    network = train(network, X, D);
+    toc;
+    
+    printf("\n\n");
 end
 
