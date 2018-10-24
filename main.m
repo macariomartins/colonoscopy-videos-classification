@@ -40,36 +40,64 @@ rbf = NeuralNetworks.RBF(X, D, [5], learning_rate, epochs, err);
 %  when selecting the number of trials. Higher numbers will need several
 %  time to be finished.
 %
-k      = 10;  % Use it for k-fold
-trials = 100; % Number of times the validations will be called
+k      = 10; % Use it for k-fold
+trials = 10; % Number of times the validations will be called
 
-mlp_accuracies = zeros(trials, 2);
-rbf_accuracies = zeros(trials, 2);
+% Variables bellow store the accuracies for each trial in both LOO and
+% KFold validations.
+mlp_accuracies = zeros(2, trials);
+rbf_accuracies = zeros(2, trials);
 
-for i = 1:trials
-    fprintf("Trial %3d/%3d", i, trials);
-    fprintf("\n-------------");
+% The following variabales store the confusion matrices for each LOO and
+% KFold validations. Each confusion matrix is already a mean matrix of the
+% validation internal executions.
+mlp_confusions = zeros(max(D), max(D), trials);
+rbf_confusions = zeros(max(D), max(D), 2, trials);
+
+% "loo_ind" and "kfold_ind" are just names to the indexes. It is good for
+% better understanding of the attributions returned from validation methods
+loo_ind   = 1;
+kfold_ind = 2;
+
+for t = 1:trials
+    fprintf("Trial %2d/%2d", t, trials);
+    fprintf("\n--------------------------");
     
     fprintf("\n\tMLP - LOO: ");
-    mlp_accuracies(i, 1) = Validations.LOO(mlp, X, D);
-    fprintf("%.4f", mlp_accuracies(i, 1));
-    
-    fprintf("\n\tMLP - %d-Fold: ", k);
-    mlp_accuracies(i, 2) = Validations.KFold(mlp, X, D, k);
-    fprintf("%.4f", mlp_accuracies(i, 2));
+    [accuracy, confusion]            = Validations.LOO(mlp, X, D);
+    mlp_accuracies(loo_ind, t)       = accuracy;
+    mlp_confusions(:, :, loo_ind, t) = confusion;
+    fprintf("%.4f", mlp_accuracies(loo_ind, t));
     
     fprintf("\n\tRBF - LOO: ");
-    rbf_accuracies(i, 1) = Validations.LOO(rbf, X, D);
-    fprintf("%.4f", rbf_accuracies(i, 1));
+    [accuracy, confusion]            = Validations.LOO(rbf, X, D);
+    rbf_accuracies(loo_ind, t)       = accuracy;
+    rbf_confusions(:, :, loo_ind, t) = confusion;
+    fprintf("%.4f", rbf_accuracies(loo_ind, t));
+    
+    fprintf("\n\tMLP - %d-Fold: ", k);
+    [accuracy, confusion]              = Validations.KFold(mlp, X, D, k);
+    mlp_accuracies(kfold_ind, t)       = accuracy;
+    mlp_confusions(:, :, kfold_ind, t) = confusion;
+    fprintf("%.4f", mlp_accuracies(kfold_ind, t));
     
     fprintf("\n\tRBF - %d-Fold: ", k);
-    rbf_accuracies(i, 2) = Validations.KFold(rbf, X, D, k);
-    fprintf("%.4f\n\n", rbf_accuracies(i, 2));
+    [accuracy, confusion]              = Validations.KFold(rbf, X, D, k);
+    rbf_accuracies(kfold_ind, t)       = accuracy;
+    rbf_confusions(:, :, kfold_ind, t) = confusion;
+    fprintf("%.4f\n\n", rbf_accuracies(kfold_ind, t));
 end
 
-mlp_worst_case = min(mlp_accuracies(:, 1));
-mlp_best_case  = max(mlp_accuracies(:, 1));
-
-rbf_worst_case = min(rbf_accuracies(:, 1));
-rbf_best_case  = max(rbf_accuracies(:, 1));
+%% Results
+%
+%  The lines bellow collect the results for MLP and RBF classifications,
+%  showing the best, worst cases and the mean confusion matrix for each
+%  validation method.
+%
+mlp_best_cases     = max(mlp_accuracies, [], 2);
+rbf_best_cases     = max(rbf_accuracies, [], 2);
+mlp_worst_cases    = min(mlp_accuracies, [], 2);
+rbf_worst_cases    = min(rbf_accuracies, [], 2);
+mlp_mean_confusion = mean(mlp_confusions, 4);
+rbf_mean_confusion = mean(rbf_confusions, 4);
 

@@ -1,4 +1,4 @@
-function accuracy = KFold(net, X, D, k)
+function [accuracy, confusion] = KFold(net, X, D, k)
 %KFOLD Get the mean accuracy with a K-Fold cross-validation
 %   To get the mean accuracy of a neural network with the K-fold validation
 %   you just need to pass the neural network, the database, labels and a
@@ -7,6 +7,7 @@ function accuracy = KFold(net, X, D, k)
     
     indexes    = crossvalind('Kfold', size(X, 2), k);
     accuracies = zeros(1, k);
+    confusion = zeros(max(D));
     
     for i = 1:k
         ind_train = find(indexes ~= i);
@@ -22,8 +23,9 @@ function accuracy = KFold(net, X, D, k)
         D_output = round(sim(net, X_test));
         
         accuracies(i) = sum(D_output == D_test) / length(D_test);
+        confusion(D_test, D_output) = confusion(D_test, D_output) + 1;
     end
     
-    accuracy = mean(accuracies);
+    accuracy  = mean(accuracies);
 end
 
