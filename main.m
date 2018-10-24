@@ -31,3 +31,17 @@ learning_rate = 0.01;        % Learning rate to be used in weights adjusts
 %
 mlp = NeuralNetworks.MLP(X, D, [7, 5], learning_rate, epochs, err);
 rbf = NeuralNetworks.RBF(X, D, [5], learning_rate, epochs, err);
+
+%% Validations
+%
+%  The lines bellow makes the cross-validation with Leave-One-Out (LOO) and
+%  K-Fold with K = 10.
+%
+mlp_accuracies = zeros(1, 2);
+rbf_accuracies = zeros(1, 2);
+
+mlp_accuracies(1) = Validations.LOO(mlp, X, D);
+mlp_accuracies(2) = Validations.KFold(mlp, X, D, 10);
+
+rbf_accuracies(1) = Validations.LOO(rbf, X, D);
+rbf_accuracies(2) = Validations.KFold(rbf, X, D, 10);
