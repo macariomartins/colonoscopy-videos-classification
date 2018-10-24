@@ -40,17 +40,31 @@ rbf = NeuralNetworks.RBF(X, D, [5], learning_rate, epochs, err);
 %  when selecting the number of trials. Higher numbers will need several
 %  time to be finished.
 %
-k      = 10  % Use it for k-fold
-trials = 100 % Number of times the validations will be called
+k      = 10;  % Use it for k-fold
+trials = 100; % Number of times the validations will be called
 
 mlp_accuracies = zeros(trials, 2);
 rbf_accuracies = zeros(trials, 2);
 
 for i = 1:trials
+    fprintf("Trial %3d/%3d", i, trials);
+    fprintf("\n-------------");
+    
+    fprintf("\n\tMLP - LOO: ");
     mlp_accuracies(i, 1) = Validations.LOO(mlp, X, D);
+    fprintf("%.4f", mlp_accuracies(i, 1));
+    
+    fprintf("\n\tMLP - %d-Fold: ", k);
     mlp_accuracies(i, 2) = Validations.KFold(mlp, X, D, k);
+    fprintf("%.4f", mlp_accuracies(i, 2));
+    
+    fprintf("\n\tRBF - LOO: ");
     rbf_accuracies(i, 1) = Validations.LOO(rbf, X, D);
+    fprintf("%.4f", rbf_accuracies(i, 1));
+    
+    fprintf("\n\tRBF - %d-Fold: ", k);
     rbf_accuracies(i, 2) = Validations.KFold(rbf, X, D, k);
+    fprintf("%.4f\n\n", rbf_accuracies(i, 2));
 end
 
 mlp_worse_case = min(mlp_accuracies(:, 1));
