@@ -35,13 +35,27 @@ rbf = NeuralNetworks.RBF(X, D, [5], learning_rate, epochs, err);
 %% Validations
 %
 %  The lines bellow makes the cross-validation with Leave-One-Out (LOO) and
-%  K-Fold with K = 10.
+%  K-Fold with K = 10 (default). You may set a number of trials as well, to
+%  search for the best and worse cases for k-fold validation. Be carefull
+%  when selecting the number of trials. Higher numbers will need several
+%  time to be finished.
 %
-mlp_accuracies = zeros(1, 2);
-rbf_accuracies = zeros(1, 2);
+k      = 10  % Use it for k-fold
+trials = 100 % Number of times the validations will be called
 
-mlp_accuracies(1) = Validations.LOO(mlp, X, D);
-mlp_accuracies(2) = Validations.KFold(mlp, X, D, 10);
+mlp_accuracies = zeros(trials, 2);
+rbf_accuracies = zeros(trials, 2);
 
-rbf_accuracies(1) = Validations.LOO(rbf, X, D);
-rbf_accuracies(2) = Validations.KFold(rbf, X, D, 10);
+for i = 1:trials
+    mlp_accuracies(i, 1) = Validations.LOO(mlp, X, D);
+    mlp_accuracies(i, 2) = Validations.KFold(mlp, X, D, k);
+    rbf_accuracies(i, 1) = Validations.LOO(rbf, X, D);
+    rbf_accuracies(i, 2) = Validations.KFold(rbf, X, D, k);
+end
+
+mlp_worse_case = min(mlp_accuracies(:, 1));
+mlp_best_case  = max(mlp_accuracies(:, 1));
+
+rbf_worse_case = min(rbf_accuracies(:, 1));
+rbf_best_case  = max(rbf_accuracies(:, 1));
+
