@@ -5,9 +5,10 @@ function [accuracy, confusion] = KFold(net, X, D, k)
 %   value for K.
 %
     
-    indexes    = crossvalind('Kfold', size(X, 2), k);
-    accuracies = zeros(1, k);
-    confusion = zeros(max(D));
+    indexes     = crossvalind('Kfold', size(X, 2), k);
+    classes_num = max(D);
+    accuracies  = zeros(1, k);
+    confusion   = zeros(classes_num);
     
     for i = 1:k
         ind_train = find(indexes ~= i);
@@ -19,13 +20,17 @@ function [accuracy, confusion] = KFold(net, X, D, k)
         X_test = X(:, ind_test);
         D_test = D(ind_test);
         
-        net = train(net, X_train, D_train);
-        D_output = round(sim(net, X_test));
+        L = ones(1, length(ind_test));               % Classification lower bound
+        U = ones(1, length(ind_test)) * classes_num; % Classification upper bound
         
-        accuracies(i) = sum(D_output == D_test) / length(D_test);
+        net   = train(net, X_train, D_train);
+        D_out = round(sim(net, X_test));
+        D_out = min(U, max(L, D_out));
+        
+        accuracies(i) = sum(D_out == D_test) / length(D_test);
         
         for j = 1:length(D_test)
-            confusion(D_test(j), D_output(j)) = confusion(D_test(j), D_output(j)) + 1;
+            confusion(D_test(j), D_out(j)) = confusion(D_test(j), D_out(j)) + 1;
         end
     end
     

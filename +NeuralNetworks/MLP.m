@@ -11,6 +11,7 @@ function network = MLP(X, D, L, learning_rate, epochs, err)
 
     network = feedforwardnet(L, 'trainlm');
     
+    network.name                  = 'mlp';
     network.layers{1}.transferFcn = 'tansig';
     network.layers{2}.transferFcn = 'tansig';
     network.trainParam.lr         = learning_rate;
