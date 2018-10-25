@@ -23,7 +23,10 @@ function [accuracy, confusion] = KFold(net, X, D, k)
         D_output = round(sim(net, X_test));
         
         accuracies(i) = sum(D_output == D_test) / length(D_test);
-        confusion(D_test, D_output) = confusion(D_test, D_output) + 1;
+        
+        for j = 1:length(D_test)
+            confusion(D_test(j), D_output(j)) = confusion(D_test(j), D_output(j)) + 1;
+        end
     end
     
     accuracy  = mean(accuracies);

@@ -17,11 +17,15 @@ clc;
 %
 load('Dataset\gastrointestinal_colonoscopy_lesions_dataset.mat');
 
-X             = features;    % P-by-N matrix of P features and N input vectors
-D             = class_label; % R-by-N matrix of R labels and N target class vectors
-err           = 1e-7;        % Mean squared error goal for both neural networks
-epochs        = 500;         % Max number of epochs
-learning_rate = 0.01;        % Learning rate to be used in weights adjusts
+all_lights  = find(light_type ~= 0);
+white_light = find(light_type == 1);
+nbi_light   = find(light_type == 2);
+
+X             = features(:, all_lights); % P-by-N matrix of P features and N input vectors
+D             = class_label(all_lights); % R-by-N matrix of R labels and N target class vectors
+err           = 1e-7;                    % Mean squared error goal for both neural networks
+epochs        = 500;                     % Max number of epochs
+learning_rate = 0.01;                    % Learning rate to be used in weights adjusts
 
 %% Build Neural Networks
 %
