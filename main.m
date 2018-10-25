@@ -21,8 +21,8 @@ all_lights  = find(light_type ~= 0);
 white_light = find(light_type == 1);
 nbi_light   = find(light_type == 2);
 
-X             = features(:, nbi_light); % P-by-N matrix of P features and N input vectors
-D             = class_label(nbi_light); % R-by-N matrix of R labels and N target class vectors
+X             = features(:, all_lights); % P-by-N matrix of P features and N input vectors
+D             = class_label(all_lights); % R-by-N matrix of R labels and N target class vectors
 err           = 1e-7;                    % Mean squared error goal for both neural networks
 epochs        = 500;                     % Max number of epochs
 learning_rate = 0.01;                    % Learning rate to be used in weights adjusts
@@ -67,23 +67,23 @@ for t = 1:trials
     fprintf("Trial %2d/%2d", t, trials);
     fprintf("\n--------------------------");
     
-%     fprintf("\n\tMLP - LOO: ");
-%     [accuracy, confusion]            = Validations.LOO(mlp, X, D);
-%     mlp_accuracies(loo_ind, t)       = accuracy;
-%     mlp_confusions(:, :, loo_ind, t) = confusion;
-%     fprintf("%.4f", mlp_accuracies(loo_ind, t));
-%     
-%     fprintf("\n\tRBF - LOO: ");
-%     [accuracy, confusion]            = Validations.LOO(rbf, X, D);
-%     rbf_accuracies(loo_ind, t)       = accuracy;
-%     rbf_confusions(:, :, loo_ind, t) = confusion;
-%     fprintf("%.4f", rbf_accuracies(loo_ind, t));
-%     
-%     fprintf("\n\tMLP - %d-Fold: ", k);
-%     [accuracy, confusion]              = Validations.KFold(mlp, X, D, k);
-%     mlp_accuracies(kfold_ind, t)       = accuracy;
-%     mlp_confusions(:, :, kfold_ind, t) = confusion;
-%     fprintf("%.4f", mlp_accuracies(kfold_ind, t));
+    fprintf("\n\tMLP - LOO: ");
+    [accuracy, confusion]            = Validations.LOO(mlp, X, D);
+    mlp_accuracies(loo_ind, t)       = accuracy;
+    mlp_confusions(:, :, loo_ind, t) = confusion;
+    fprintf("%.4f", mlp_accuracies(loo_ind, t));
+    
+    fprintf("\n\tRBF - LOO: ");
+    [accuracy, confusion]            = Validations.LOO(rbf, X, D);
+    rbf_accuracies(loo_ind, t)       = accuracy;
+    rbf_confusions(:, :, loo_ind, t) = confusion;
+    fprintf("%.4f", rbf_accuracies(loo_ind, t));
+    
+    fprintf("\n\tMLP - %d-Fold: ", k);
+    [accuracy, confusion]              = Validations.KFold(mlp, X, D, k);
+    mlp_accuracies(kfold_ind, t)       = accuracy;
+    mlp_confusions(:, :, kfold_ind, t) = confusion;
+    fprintf("%.4f", mlp_accuracies(kfold_ind, t));
     
     fprintf("\n\tRBF - %d-Fold: ", k);
     [accuracy, confusion]              = Validations.KFold(rbf, X, D, k);
