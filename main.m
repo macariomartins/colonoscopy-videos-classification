@@ -27,8 +27,7 @@ nbi_light   = find(light_type == 2); % Select just NBI ilumination
 %--------------------------------------------------------------------------
 % Database size initial settings
 %--------------------------------------------------------------------------
-samples_inds = all_lights;                     % Use it as a pivot to select the ilumination
-samples_num  = size(samples_inds, 2);          % Get the number of samples
+samples_inds = white_light;                     % Use it as a pivot to select the ilumination
 classes_num  = max(class_label(samples_inds)); % Get the number of used classes
 
 clear all_lights white_light nbi_light;
@@ -60,7 +59,7 @@ classified_samples  = {};
 classes_upper_bound = size(features(:, samples_inds), 2);
 
 for class = 1:classes_num
-    classified_samples{class} = find(class_label == class);
+    classified_samples{class} = find(class_label(samples_inds) == class);
     
     if (size(classified_samples{class}, 2) < classes_upper_bound)
         classes_upper_bound = size(classified_samples{class}, 2);
