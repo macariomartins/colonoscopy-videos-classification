@@ -27,7 +27,7 @@ nbi_light   = find(light_type == 2); % Select just NBI ilumination
 %--------------------------------------------------------------------------
 % Database size initial settings
 %--------------------------------------------------------------------------
-samples_inds = white_light;                     % Use it as a pivot to select the ilumination
+samples_inds = all_lights;                     % Use it as a pivot to select the ilumination
 classes_num  = max(class_label(samples_inds)); % Get the number of used classes
 
 clear all_lights white_light nbi_light;
@@ -90,37 +90,27 @@ end
 clear class_samples_num;
 
 %--------------------------------------------------------------------------
-% Compose the database with just the randomly chosen samples
+% Compose the database with just the randomly chosen samples and create the
+% label vectors
 %--------------------------------------------------------------------------
 X = zeros(size(features, 1), classes_num * samples_num);
-database_ind = 1;
+D = zeros(classes_num, classes_num * samples_num);
+samples_count = zeros(classes_num, 1);
+database_ind  = 1;
 
 for sample = 1:samples_num
     for class = 1:classes_num
-        sample_index = selected_samples_inds(class, sample);
-        X(:, database_ind) = features(:, sample_index);
+        sample_index           = selected_samples_inds(class, sample);
+        X(:, database_ind)     = features(:, sample_index);
+        D(class, database_ind) = 1;
+        samples_count(class)   = samples_count(class) + 1;
         database_ind = database_ind + 1;
     end
 end
 
 samples_num = samples_num * classes_num; % Samples num is redefined to represent the whole database
 
-clear database_ind selected_samples_inds;
-
-%--------------------------------------------------------------------------
-% Create the label vectors, since the database is already prepared
-%--------------------------------------------------------------------------
-D = zeros(classes_num, samples_num);   % 1-by-N vector of labels for all N input vectors
-samples_count = zeros(classes_num, 1); % A variable to count the number of samples for each class
-
-for i = 1:samples_num
-    sample_i             = samples_inds(i);          % Gets the sample index in database
-    class                = class_label(sample_i);    % Gets the class of the sample
-    D(class, i)          = 1;                        % Sets 1 for the class index in D
-    samples_count(class) = samples_count(class) + 1; % Counts the samples for each class
-end
-
-clear class samples_count samples_inds;
+clear class database_ind samples_count samples_inds selected_samples_inds;
 
 %% Build Neural Networks
 %
