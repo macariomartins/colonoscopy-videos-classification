@@ -143,7 +143,7 @@ rbf_accuracies = zeros(2, trials);
 % KFold validations. Each confusion matrix is already a mean matrix of the
 % validation internal executions.
 %--------------------------------------------------------------------------
-mlp_confusions = zeros(classes_num, classes_num, trials);
+mlp_confusions = zeros(classes_num, classes_num, 2, trials);
 rbf_confusions = zeros(classes_num, classes_num, 2, trials);
 
 %--------------------------------------------------------------------------
