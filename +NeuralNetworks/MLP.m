@@ -14,15 +14,18 @@ function network = MLP(X, D, L, learning_rate, epochs, err)
 
     network = feedforwardnet(L, 'trainlm');
     
-    network.name                  = 'mlp';
-    network.layers{1}.transferFcn = 'tansig';
-    network.layers{2}.transferFcn = 'tansig';
+    for l = 1:length(network.layers)-1
+        network.layers{l}.transferFcn = 'tansig';
+    end
+    
+    network.layers{length(network.layers)}.transferFcn = 'purelin';
     network.trainParam.lr         = learning_rate;
     network.trainParam.epochs     = epochs;
     network.trainParam.goal       = err;
     network.trainParam.showWindow = false;
     network.trainParam.max_fail   = 1000;
     network.divideFcn             = '';
+    network.name                  = 'mlp';
     
     fprintf("BUILDING MULTI LAYER PERCEPTRON");
     fprintf("\n-------------------------------");

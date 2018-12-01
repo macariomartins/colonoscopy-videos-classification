@@ -16,6 +16,8 @@ clc;
 %  free to test any configuration you want.
 %
 load('Dataset\gastrointestinal_colonoscopy_lesions_dataset.mat');
+diary(char(strcat('Log ', datetime('now'), '.txt')));
+tic;
 
 %--------------------------------------------------------------------------
 % Ilumination settings
@@ -194,4 +196,7 @@ mlp_worst_cases    = min(mlp_accuracies, [], 2);
 rbf_worst_cases    = min(rbf_accuracies, [], 2);
 mlp_mean_confusion = mean(mlp_confusions, 4);
 rbf_mean_confusion = mean(rbf_confusions, 4);
+
+toc;
+diary off;
 
