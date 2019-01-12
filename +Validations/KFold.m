@@ -21,8 +21,8 @@ function [accuracy, confusion] = KFold(net, X, D, k)
         
         X_test = X(:, ind_test);
         
-        net = train(net, X_train, D_train);
-        Y   = net(X_test);
+        net = train(net, X_train, D_train, 'useGPU', 'yes');
+        Y   = net(X_test, 'useGPU', 'yes');
         
         [~, D_test] = max(D(:, ind_test));
         [~, D_out ] = max(Y);

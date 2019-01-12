@@ -12,7 +12,7 @@ function network = MLP(X, D, L, learning_rate, epochs, err)
 %   err              The target mean square error
 %
 
-    network = feedforwardnet(L, 'trainlm');
+    network = feedforwardnet(L, 'trainscg');
     
     for l = 1:length(network.layers)-1
         network.layers{l}.transferFcn = 'tansig';
@@ -25,7 +25,8 @@ function network = MLP(X, D, L, learning_rate, epochs, err)
     network.trainParam.showWindow = false;
     network.trainParam.max_fail   = 1000;
     network.divideFcn             = '';
-    network.name                  = 'mlp';
+    network.name                  = 'MLP';
+    network.input.processFcns     = {'mapminmax'};
     
     fprintf("BUILDING MULTI LAYER PERCEPTRON");
     fprintf("\n-------------------------------");

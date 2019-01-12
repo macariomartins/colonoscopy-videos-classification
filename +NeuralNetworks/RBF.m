@@ -11,7 +11,7 @@ function network = RBF(X, D, L, learning_rate, epochs, err)
 %   err              The target mean square error
 %
 
-    network = feedforwardnet(L, 'trainlm');
+    network = feedforwardnet(L, 'trainscg');
     
     network.layers{1}.transferFcn = 'radbas';
     network.layers{2}.transferFcn = 'purelin';
@@ -21,7 +21,8 @@ function network = RBF(X, D, L, learning_rate, epochs, err)
     network.trainParam.showWindow = false;
     network.trainParam.max_fail   = 1000;
     network.divideFcn             = '';
-    network.name                  = 'rbf';
+    network.name                  = 'RBF';
+    network.input.processFcns     = {'mapminmax'};
     
     fprintf("BUILDING RADIAL BASIS FUNCTION");
     fprintf("\n------------------------------");
