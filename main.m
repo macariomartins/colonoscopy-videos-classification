@@ -16,7 +16,7 @@ clc;
 %  free to test any configuration you want.
 %
 load('Dataset\gastrointestinal_colonoscopy_lesions_dataset.mat');
-% diary(char(strcat('log-', char(datetime('now', 'Format', 'y-M-d-H-m-s')), '.txt')));
+diary(char(strcat('log-', char(datetime('now', 'Format', 'y-M-d-H-m-s')), '.txt')));
 tic;
 
 %--------------------------------------------------------------------------
